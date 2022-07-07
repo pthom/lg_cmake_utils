@@ -14,12 +14,13 @@ function(lg_setup_module
     # Set python_native_module_name install path to "." (required by skbuild)
     install(TARGETS ${python_native_module_name} DESTINATION .)
     # Copy the python module to the project dir post build (for editable mode)
-    add_custom_command(
-        TARGET ${python_native_module_name}
-        POST_BUILD
+    set(module_built_shared_library_dest ${CMAKE_CURRENT_SOURCE_DIR}/bindings/${python_wrapper_module_name}/$<TARGET_FILE_NAME:${python_native_module_name}>)
+    add_custom_target(
+        ${python_native_module_name}_deploy_editable
         COMMAND ${CMAKE_COMMAND} -E copy
         $<TARGET_FILE:${python_native_module_name}>
-        ${CMAKE_CURRENT_SOURCE_DIR}/bindings/${python_wrapper_module_name}/$<TARGET_FILE_NAME:${python_native_module_name}>
+        ${module_built_shared_library_dest}
+        DEPENDS ${python_native_module_name}
     )
 
     #
