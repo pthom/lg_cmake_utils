@@ -17,6 +17,7 @@ function(lg_setup_module
     set(module_built_shared_library_dest ${CMAKE_CURRENT_SOURCE_DIR}/bindings/${python_wrapper_module_name}/$<TARGET_FILE_NAME:${python_native_module_name}>)
     add_custom_target(
         ${python_native_module_name}_deploy_editable
+        ALL
         COMMAND ${CMAKE_COMMAND} -E copy
         $<TARGET_FILE:${python_native_module_name}>
         ${module_built_shared_library_dest}
