@@ -1,22 +1,17 @@
-function(lg_add_module
+function(lg_setup_module
     bound_library
     python_native_module_name
     python_wrapper_module_name
-    python_module_sources
     )
     # Parameters explanation, with an example: let's say we want to build binding for a C++ library named "foolib",
     #
     #    bound_library               : name of the C++ for which we build bindings ("foolib")
     #    python_native_module_name   : name of the native python module that provides bindings (for example "_foolib")
     #    python_wrapper_module_name  : name of the standard python module that will import the native module (for example "foolib")
-    #    python_module_sources       : sources for the python module (for example "bindings/module.cpp bindings/pybind_${bound_library}.cpp")
 
-
-    # Create module via pybind11
-    pybind11_add_module(${python_native_module_name} ${python_module_sources})
     target_link_libraries(${python_native_module_name} PRIVATE ${bound_library})
 
-    # Set install path to "." (required by skbuild)
+    # Set python_native_module_name install path to "." (required by skbuild)
     install(TARGETS ${python_native_module_name} DESTINATION .)
     # Copy the python module to the project dir post build (for editable mode)
     add_custom_command(
@@ -30,6 +25,7 @@ function(lg_add_module
     #
     # Set the rpath for Linux and  MacOS (see https://github.com/pybind/cmake_example/issues/11)
     #
+
     # rpath for the native python module: the bound_library should be installed in the lib/ subfolder
     install(TARGETS ${bound_library} DESTINATION ./lib/)
     lg_target_set_rpath(${python_native_module_name} "lib")
