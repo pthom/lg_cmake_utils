@@ -1,9 +1,16 @@
 function(lg_add_module
+    bound_library
     python_native_module_name
     python_wrapper_module_name
-    bound_library
     python_module_sources
     )
+    # Parameters explanation, with an example: let's say we want to build binding for a C++ library named "foolib",
+    #
+    #    bound_library               : name of the C++ for which we build bindings ("foolib")
+    #    python_native_module_name   : name of the native python module that provides bindings (for example "_foolib")
+    #    python_wrapper_module_name  : name of the standard python module that will import the native module (for example "foolib")
+    #    python_module_sources       : sources for the python module (for example "bindings/module.cpp bindings/pybind_${bound_library}.cpp")
+
 
     # Create module via pybind11
     pybind11_add_module(${python_native_module_name} ${python_module_sources})
