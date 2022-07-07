@@ -14,6 +14,8 @@ function(add_imgui_target imgui_dir)
         #       warning: '~ImGuiWindow' has a non-throwing exception specification but can still throw [-Wexceptions]
         if ("${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang")
             target_compile_options(imgui PRIVATE -Wno-exceptions)
+        elseif (CMAKE_COMPILER_IS_GNUCC)
+            target_compile_options(imgui PRIVATE -Wno-terminate)
         endif()
 
         install(TARGETS imgui DESTINATION ./lib/)
