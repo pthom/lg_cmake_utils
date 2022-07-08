@@ -9,13 +9,15 @@ function(add_imgui_target imgui_dir)
         target_include_directories(imgui PUBLIC ${imgui_dir})
         target_compile_definitions(imgui PRIVATE IMGUI_USER_CONFIG="${_THIS_MODULE_BASE_DIR}/lg_imgui_imconfig.h")
 
-        # Disable warning due to IM_ASSERT implementation (see lg_imgui_imconfig.h)
-        # which uses exceptions and raises warnings like this:
+        # Disable warning due to IM_ASSERT implementation which uses exceptions (see lg_imgui_imconfig.h)
+        #  and raises warnings in destructors like this:
         #       warning: '~ImGuiWindow' has a non-throwing exception specification but can still throw [-Wexceptions]
         if ("${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang")
             target_compile_options(imgui PRIVATE -Wno-exceptions)
         elseif (CMAKE_COMPILER_IS_GNUCC)
             target_compile_options(imgui PRIVATE -Wno-terminate)
+        elseif(MSVC)
+            target_compile_options(imgui PRIVATE "/wd4297")
         endif()
 
         install(TARGETS imgui DESTINATION ./lib/)
