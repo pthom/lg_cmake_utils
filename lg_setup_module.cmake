@@ -23,19 +23,4 @@ function(lg_setup_module
         COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:${bound_library}> ${bound_library_dest}
         DEPENDS ${python_native_module_name}
     )
-
-    #
-    # Set the rpath for Linux and  MacOS (see https://github.com/pybind/cmake_example/issues/11)
-    #
-
-    # rpath for the native python module: the bound_library should be installed in the lib/ subfolder
-    install(TARGETS ${bound_library} DESTINATION ./lib/)
-    lg_target_set_rpath(${python_native_module_name} "lib")
-
-    # rpath for the bound library: the bound library is in the lib/ subfolder,
-    # and, if it needs additional libraries, it should look for them in the same subfolder
-    lg_target_set_rpath(${bound_library} ".")
-
-    # On Windows, install DLLs in install folder root
-    lg_target_install_linked_dlls_in_same_folder(${python_native_module_name})
 endfunction()
