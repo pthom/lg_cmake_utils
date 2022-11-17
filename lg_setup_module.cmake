@@ -1,3 +1,53 @@
+set(lg_incremental_counter 0 CACHE INTERNAL "lg_incremental_counter")
+macro(lg_increment_counter)
+    math(EXPR next_value "${lg_incremental_counter} + 1")
+    # message("lg_increment_counter => lg_incremental_counter=${lg_incremental_counter} next_value=${next_value} before set")
+    set(lg_incremental_counter ${next_value} CACHE INTERNAL "lg_incremental_counter")
+    # message("lg_increment_counter => lg_incremental_counter=${lg_incremental_counter} after set")
+endmacro()
+
+function (lg_copy_target_output_to_python_wrapper_folder_with_custom_name
+    python_wrapper_module_name
+    target_name
+    target_custom_name
+    )
+    set(target_file_full_path $<TARGET_FILE:${target_name}>)
+    set(python_wrapper_folder ${CMAKE_CURRENT_SOURCE_DIR}/bindings/${python_wrapper_module_name})
+    set(target_dest ${python_wrapper_folder}/${target_custom_name})
+    lg_increment_counter()
+    set(custom_target_name ${python_wrapper_module_name}_${target_name}_${lg_incremental_counter}_deploy_editable)
+
+    add_custom_target(
+        ${custom_target_name}
+        ALL
+        COMMAND ${CMAKE_COMMAND} -E copy ${target_file_full_path} ${target_dest}
+        DEPENDS ${python_native_module_name}
+    )
+    message("
+    add_custom_target(
+        ${custom_target_name}
+        ALL
+        COMMAND ${CMAKE_COMMAND} -E copy ${target_file_full_path} ${target_dest}
+        DEPENDS ${python_native_module_name}
+    )
+    ")
+
+endfunction()
+
+
+function (lg_copy_target_output_to_python_wrapper_folder
+    python_wrapper_module_name
+    target_name
+    )
+    set(target_filename $<TARGET_FILE_NAME:${target_name}>)
+    lg_copy_target_output_to_python_wrapper_folder_with_custom_name(
+        ${python_wrapper_module_name}
+        ${target_name}
+        ${target_filename}
+    )
+endfunction()
+
+
 function(lg_setup_module
     bound_library
     python_native_module_name
@@ -13,14 +63,7 @@ function(lg_setup_module
 
     # Set python_native_module_name install path to "." (required by skbuild)
     install(TARGETS ${python_native_module_name} DESTINATION .)
+
     # Copy the python module to the project dir post build (for editable mode)
-    set(python_native_module_dest ${CMAKE_CURRENT_SOURCE_DIR}/bindings/${python_wrapper_module_name}/$<TARGET_FILE_NAME:${python_native_module_name}>)
-    set(bound_library_dest ${CMAKE_CURRENT_SOURCE_DIR}/bindings/${python_wrapper_module_name}/lib/$<TARGET_FILE_NAME:${bound_library}>)
-    add_custom_target(
-        ${python_native_module_name}_deploy_editable
-        ALL
-        COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:${python_native_module_name}> ${python_native_module_dest}
-        COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:${bound_library}> ${bound_library_dest}
-        DEPENDS ${python_native_module_name}
-    )
+    lg_copy_target_output_to_python_wrapper_folder(${python_wrapper_module_name} ${python_native_module_name})
 endfunction()
