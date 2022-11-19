@@ -23,15 +23,6 @@ function (lg_copy_target_output_to_python_wrapper_folder_with_custom_name
         COMMAND ${CMAKE_COMMAND} -E copy ${target_file_full_path} ${target_dest}
         DEPENDS ${python_native_module_name}
     )
-    message("
-    add_custom_target(
-        ${custom_target_name}
-        ALL
-        COMMAND ${CMAKE_COMMAND} -E copy ${target_file_full_path} ${target_dest}
-        DEPENDS ${python_native_module_name}
-    )
-    ")
-
 endfunction()
 
 
