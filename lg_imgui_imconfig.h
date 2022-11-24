@@ -17,6 +17,19 @@
 #include <stdexcept>
 #include <string>
 
+inline std::string _file_short_name(const std::string& filename)
+{
+    auto pos = filename.rfind("/");
+    if (pos != std::string::npos)
+        return filename.substr(pos + 1);
+
+    pos = filename.rfind("\\");
+    if (pos != std::string::npos)
+        return filename.substr(pos + 1);
+
+    return filename;
+}
+
 //---- Define assertion handler. Defaults to calling assert().
 // If your macro uses multiple statements, make sure is enclosed in a 'do { .. } while (0)' block so it can be used as a single statement.
 #define STRINGIFY(s) #s
@@ -24,7 +37,8 @@
     do \
     { \
         if (!(_EXPR)) \
-            throw std::runtime_error(std::string("IM_ASSERT( ") + STRINGIFY(_EXPR) + " )"); \
+            throw std::runtime_error(std::string("IM_ASSERT( ") + STRINGIFY(_EXPR) + " )"      \
+                + "   ---   " +  _file_short_name(__FILE__) + ":" + std::to_string(__LINE__) ); \
     } \
     while(0)
 
