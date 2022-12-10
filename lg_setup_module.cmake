@@ -12,7 +12,7 @@ function (lg_copy_target_output_to_python_wrapper_folder_with_custom_name
     target_custom_name
     )
     set(target_file_full_path $<TARGET_FILE:${target_name}>)
-    set(python_wrapper_folder ${CMAKE_CURRENT_SOURCE_DIR}/bindings/${python_wrapper_module_name})
+    set(python_wrapper_folder ${PROJECT_SOURCE_DIR}/bindings/${python_wrapper_module_name})
     set(target_dest ${python_wrapper_folder}/${target_custom_name})
     lg_increment_counter()
     set(custom_target_name ${python_wrapper_module_name}_${target_name}_${lg_incremental_counter}_deploy_editable)
